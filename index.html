@@ -189,11 +189,41 @@ h1{font:400 clamp(26px,3.4vw,36px)/1.05 'Black Han Sans',sans-serif;margin:0;let
 .marquee{font:400 26px/1 'Black Han Sans',sans-serif;text-align:center;color:#fff3c4;letter-spacing:.04em;padding:6px 0 10px}
 .bulbs{height:10px;background:radial-gradient(circle,#ffe9a6 38%,transparent 44%) 0 0/16px 10px repeat-x;margin-bottom:10px}
 .reels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;background:#1b0f0b;padding:10px;border-radius:14px}
-.reel{aspect-ratio:3/4;border-radius:10px;background:linear-gradient(#d8ccb0,#fffaf0 30%,#fffaf0 70%,#d8ccb0);display:grid;place-items:center;padding:10%}
-.reel svg{width:100%;height:auto}
+.machine{position:relative;padding-right:46px!important}
+.reels{position:relative}
+.reel{aspect-ratio:3/4;border-radius:10px;background:linear-gradient(#d8ccb0,#fffaf0 30%,#fffaf0 70%,#d8ccb0);position:relative;overflow:hidden}
+.reel::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(60,30,10,.3),transparent 24%,transparent 76%,rgba(60,30,10,.3));pointer-events:none}
+.strip{position:absolute;inset:0;display:flex;flex-direction:column}
+.cell{flex:0 0 100%;display:grid;place-items:center;padding:12%}
+.cell svg{width:100%;height:auto}
+.payline{position:absolute;left:6px;right:6px;top:50%;height:3px;margin-top:-1px;background:rgba(217,54,62,.6);border-radius:2px;pointer-events:none}
+.reel.tease{box-shadow:0 0 0 3px #fff3c4,0 0 22px #ffd34d;animation:tease .3s ease-in-out infinite alternate}
+@keyframes tease{to{box-shadow:0 0 0 4px #ffd34d,0 0 36px #ff9f1c}}
+.machine.spin .bulbs{animation:chase2 .22s steps(2) infinite}
+@keyframes chase2{to{background-position:16px 0}}
+.machine.big{animation:shake .45s 3}
+@keyframes shake{0%,100%{transform:none}25%{transform:translate(-6px,2px) rotate(-1deg)}50%{transform:translate(6px,-2px) rotate(1deg)}75%{transform:translate(-3px,1px)}}
+.marquee.flash{animation:flash .16s steps(2) 10}
+@keyframes flash{50%{color:#fff;text-shadow:0 0 14px #ffd34d,0 0 4px #ff4d4d}}
+.winpop{position:absolute;left:16px;right:46px;top:46%;text-align:center;font:400 clamp(28px,6vw,48px)/1 'Black Han Sans',sans-serif;color:#fff3c4;text-shadow:0 3px 0 #7a1015,0 0 18px #ffb81c;pointer-events:none;opacity:0;white-space:nowrap}
+.winpop.show{animation:pop 1.8s ease-out forwards}
+@keyframes pop{0%{opacity:0;transform:scale(.4)}14%{opacity:1;transform:scale(1.2)}28%{transform:scale(1)}78%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-34px)}}
+.coin{position:absolute;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff6c2,#efbf4f 45%,#b8860b);box-shadow:inset 0 0 0 2px #a8740f;pointer-events:none;opacity:0;animation:coin 1.3s cubic-bezier(.15,.7,.4,1) forwards}
+@keyframes coin{0%{opacity:1;transform:translate(0,0) scale(.5)}70%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--r)) scale(1)}}
+.lever{position:absolute;right:12px;top:64px;width:22px;height:118px}
+.lever i{position:absolute;left:8px;bottom:12px;width:6px;height:92px;border-radius:3px;background:linear-gradient(90deg,#9a9a9a,#eee,#9a9a9a);transform-origin:bottom}
+.lever b{position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ff8a8f,#d9363e 55%,#8a1a20)}
+.lever::after{content:"";position:absolute;left:2px;bottom:0;width:18px;height:16px;border-radius:5px;background:#3a1d0e}
+.lever.pull i{animation:pullI .55s ease-in-out}
+.lever.pull b{animation:pullB .55s ease-in-out}
+@keyframes pullI{45%{transform:scaleY(.25)}}
+@keyframes pullB{45%{transform:translateY(69px)}}
+.snd{position:absolute;right:8px;bottom:-52px;min-height:40px;font-size:13px}
+.sl .machine{margin-bottom:52px}
+@media(prefers-reduced-motion:reduce){.machine.big,.marquee.flash,.reel.tease,.lever.pull i,.lever.pull b,.machine.spin .bulbs{animation:none}.coin{display:none}}
 .reel.hit{box-shadow:0 0 0 4px var(--gold),0 0 18px var(--gold)}
 .reel.stop{animation:bump .2s}
-@keyframes bump{50%{transform:translateY(4px)}}
+@keyframes bump{40%{transform:translateY(6px)}70%{transform:translateY(-2px)}}
 .machine .go{width:100%;margin-top:14px}
 #pay{list-style:none;margin:0;padding:0}
 #pay li{display:grid;grid-template-columns:96px auto minmax(0,1fr);align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--line)}
@@ -417,16 +447,19 @@ h1{font:400 clamp(26px,3.4vw,36px)/1.05 'Black Han Sans',sans-serif;margin:0;let
 
       <div class="panel" id="p-slots" hidden>
         <div class="sl">
-          <div class="machine">
-            <div class="marquee">JACKPOT ×777</div>
+          <div class="machine" id="mach">
+            <div class="marquee" id="sMarq">JACKPOT ×777</div>
             <div class="bulbs"></div>
-            <div class="reels"><div class="reel"></div><div class="reel"></div><div class="reel"></div></div>
+            <div class="reels"><div class="reel"></div><div class="reel"></div><div class="reel"></div><div class="payline"></div></div>
+            <div class="winpop" id="sPop" aria-live="polite"></div>
+            <div class="lever" id="sLever" aria-hidden="true"><i></i><b></b></div>
             <button class="go cash" id="sGo">레버 당기기</button>
+            <button class="pill snd" id="sSnd" aria-pressed="true">소리 켜짐</button>
           </div>
           <div>
             <h3 style="margin:0 0 6px;font-size:16px">배당표</h3>
             <ul id="pay"></ul>
-            <p class="muted">같은 그림 세 개면 큰 배당이에요. 종·별·세븐·다이아는 두 개만 맞아도 배당을 받아요.</p>
+            <p class="muted">같은 그림 세 개면 큰 배당이에요. 별·세븐·다이아는 두 개만 맞아도 배당을 받고, 종 두 개는 절반을 돌려받아요.</p>
           </div>
         </div>
       </div>
@@ -445,7 +478,7 @@ h1{font:400 clamp(26px,3.4vw,36px)/1.05 'Black Han Sans',sans-serif;margin:0;let
     <ul id="log"></ul>
   </aside>
 </main>
-<p class="foot">가상 머니 게임이에요. 실제 돈은 오가지 않아요. 게임마다 배당을 이렇게 맞췄어요: 환수율 룰렛 97.3%, 하이로우 97%, 슬롯 약 100%, 폭탄 상자 100~110%(오래 버틸수록 높아요). 인디언 포커는 사람끼리 겨뤄서 집이 가져가는 몫이 없어요. 온라인 대결은 Firebase로 연결돼요.</p>
+<p class="foot">가상 머니 게임이에요. 실제 돈은 오가지 않아요. 게임마다 배당을 이렇게 맞췄어요: 환수율 룰렛 97.3%, 하이로우 97%, 슬롯 약 101%, 폭탄 상자 100~110%(오래 버틸수록 높아요). 인디언 포커는 사람끼리 겨뤄서 집이 가져가는 몫이 없어요. 온라인 대결은 Firebase로 연결돼요.</p>
 </div>
 
 <div id="ov" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="ovT"><h2 id="ovT"></h2><p id="ovP"></p><div id="ovB"></div></div></div>
@@ -807,20 +840,51 @@ $$('.tile').forEach((t,i)=>t.onclick=()=>{if(!M.on){say('시작을 누르면 상
 /* slots */
 const starPts=Array.from({length:10},(_,i)=>{const a=Math.PI/5*i-Math.PI/2,r=i%2?17:40;return(50+r*Math.cos(a)).toFixed(1)+','+(54+r*Math.sin(a)).toFixed(1)}).join(' ');
 const SYM=[
- {k:'cherry',n:'체리',w:30,p3:7,p2:0,svg:'<svg viewBox="0 0 100 100"><path d="M34 66Q40 34 62 16M66 66Q64 38 62 16" stroke="#2f7d32" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M62 16q16 0 22 10q-14 4-22-10z" fill="#4caf50"/><circle cx="32" cy="70" r="17" fill="#d61f2c"/><circle cx="68" cy="70" r="17" fill="#b5121e"/><circle cx="26" cy="64" r="5" fill="#fff" opacity=".6"/><circle cx="62" cy="64" r="5" fill="#fff" opacity=".5"/></svg>'},
+ {k:'cherry',n:'체리',w:24,p3:8,p2:0,svg:'<svg viewBox="0 0 100 100"><path d="M34 66Q40 34 62 16M66 66Q64 38 62 16" stroke="#2f7d32" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M62 16q16 0 22 10q-14 4-22-10z" fill="#4caf50"/><circle cx="32" cy="70" r="17" fill="#d61f2c"/><circle cx="68" cy="70" r="17" fill="#b5121e"/><circle cx="26" cy="64" r="5" fill="#fff" opacity=".6"/><circle cx="62" cy="64" r="5" fill="#fff" opacity=".5"/></svg>'},
  {k:'lemon',n:'레몬',w:25,p3:12,p2:0,svg:'<svg viewBox="0 0 100 100"><g transform="rotate(-20 50 54)"><circle cx="15" cy="54" r="6" fill="#e9bf18"/><circle cx="85" cy="54" r="6" fill="#e9bf18"/><ellipse cx="50" cy="54" rx="35" ry="27" fill="#f7d33a" stroke="#d8a90f" stroke-width="3"/><ellipse cx="40" cy="45" rx="11" ry="5" fill="#fff" opacity=".55"/></g></svg>'},
- {k:'bell',n:'종',w:18,p3:25,p2:1,svg:'<svg viewBox="0 0 100 100"><circle cx="50" cy="15" r="6" fill="#b8860b"/><path d="M50 18C30 18 26 38 26 54C26 66 18 70 16 76H84C82 70 74 66 74 54C74 38 70 18 50 18Z" fill="#f2b632"/><path d="M50 18C40 22 36 38 36 56C36 66 32 72 30 76H16C18 70 26 66 26 54C26 38 30 18 50 18Z" fill="#ffd873"/><circle cx="50" cy="86" r="7" fill="#a86f12"/><rect x="14" y="73" width="72" height="8" rx="4" fill="#c9891a"/></svg>'},
- {k:'star',n:'별',w:14,p3:40,p2:1,svg:`<svg viewBox="0 0 100 100"><polygon points="${starPts}" fill="#ffb81c" stroke="#d98a00" stroke-width="3" stroke-linejoin="round"/><circle cx="42" cy="44" r="5" fill="#fff" opacity=".6"/></svg>`},
+ {k:'bell',n:'종',w:21,p3:22,p2:.5,svg:'<svg viewBox="0 0 100 100"><circle cx="50" cy="15" r="6" fill="#b8860b"/><path d="M50 18C30 18 26 38 26 54C26 66 18 70 16 76H84C82 70 74 66 74 54C74 38 70 18 50 18Z" fill="#f2b632"/><path d="M50 18C40 22 36 38 36 56C36 66 32 72 30 76H16C18 70 26 66 26 54C26 38 30 18 50 18Z" fill="#ffd873"/><circle cx="50" cy="86" r="7" fill="#a86f12"/><rect x="14" y="73" width="72" height="8" rx="4" fill="#c9891a"/></svg>'},
+ {k:'star',n:'별',w:17,p3:30,p2:1,svg:`<svg viewBox="0 0 100 100"><polygon points="${starPts}" fill="#ffb81c" stroke="#d98a00" stroke-width="3" stroke-linejoin="round"/><circle cx="42" cy="44" r="5" fill="#fff" opacity=".6"/></svg>`},
  {k:'seven',n:'세븐',w:8,p3:150,p2:2,svg:'<svg viewBox="0 0 100 100"><text x="50" y="86" text-anchor="middle" font-family="Black Han Sans,sans-serif" font-size="90" fill="#e1262f" stroke="#6e0d12" stroke-width="5" paint-order="stroke">7</text></svg>'},
  {k:'gem',n:'다이아',w:5,p3:777,p2:4,svg:GEM}];
 const pick=()=>{let x=rnd(100);for(const s of SYM){if(x<s.w)return s;x-=s.w}return SYM[0]};
 function sEval(r){const c={};r.forEach(s=>c[s.k]=(c[s.k]||0)+1);for(const s of SYM)if(c[s.k]===3)return{m:s.p3,t:s.n+' 세 개',k:s.k};let best={m:0,t:'꽝',k:''};for(const s of SYM)if(c[s.k]===2&&s.p2)best={m:s.p2,t:s.n+' 두 개',k:s.k};return best}
 $('#pay').innerHTML=SYM.slice().reverse().map(s=>`<li><span class="pi">${s.svg.repeat(3)}</span><b>×${s.p3}</b><span class="d">${s.p2?'두 개 ×'+s.p2:'두 개는 꽝'}</span></li>`).join('');
-{const r=$$('.reel');[4,4,3].forEach((k,j)=>r[j].innerHTML=SYM[k].svg)}
-$('#sGo').onclick=()=>{const b=take();if(!b)return;busy=true;$('#sGo').disabled=true;say('릴이 돌아갑니다…');const fin=[pick(),pick(),pick()],reels=$$('.reel');let stopped=0;
-  function done(){busy=false;$('#sGo').disabled=false;const e=sEval(fin),ret=Math.floor(b*e.m);reels.forEach((el,j)=>el.classList.toggle('hit',!!e.k&&fin[j].k===e.k));
-    say(e.m?`${e.t}! ×${e.m} → ${fmt(ret)} 받았어요.`:`꽝. ${fmt(b)}을 잃었어요.`,e.m>=1?'win':'lose');settle('슬롯',e.m?`${e.t} ×${e.m}`:'꽝',b,ret)}
-  reels.forEach((el,j)=>{el.classList.remove('hit');const iv=setInterval(()=>{el.innerHTML=pick().svg},70);setTimeout(()=>{clearInterval(iv);el.innerHTML=fin[j].svg;el.classList.add('stop');setTimeout(()=>el.classList.remove('stop'),220);if(++stopped===3)done()},reduce?20:700+j*450)})};
+/* slot sound: tiny synth, starts only from a click */
+let AC=null;
+function ac(){if(S.sound===false)return null;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return AC}catch(e){return null}}
+function beep(f,t0,dur,type,vol){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain(),t=a.currentTime+t0;o.type=type||'square';o.frequency.setValueAtTime(f,t);g.gain.setValueAtTime(vol||.05,t);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+dur+.03)}
+const sfx={tick:()=>beep(1000+rnd(300),0,.025,'square',.018),pull:()=>{beep(180,0,.18,'sawtooth',.05);beep(120,.08,.2,'triangle',.08)},stop:()=>{beep(150,0,.12,'triangle',.2);beep(80,0,.16,'sine',.22)},tease:()=>[0,.12,.24].forEach(d=>beep(880,d,.07,'square',.035)),
+  win:lvl=>{const n=lvl>=3?[523,659,784,1047,784,1047,1319,1568,2093]:lvl>=2?[523,659,784,1047,1319]:[659,880,1047];n.forEach((f,i)=>beep(f,i*.085,.2,'square',.055))},lose:()=>{beep(260,0,.16,'triangle',.07);beep(190,.15,.26,'triangle',.07)}};
+const mach=$('#mach'),reels=$$('.reel');
+const cellsHTML=list=>`<div class="strip">${list.map(s=>`<div class="cell">${s.svg}</div>`).join('')}</div>`;
+[4,4,3].forEach((k,j)=>{reels[j].innerHTML=cellsHTML([SYM[k]]);reels[j].dataset.k=SYM[k].k});
+function sSndRender(){$('#sSnd').textContent=S.sound===false?'소리 꺼짐':'소리 켜짐';$('#sSnd').setAttribute('aria-pressed',S.sound!==false)}
+$('#sSnd').onclick=()=>{S.sound=S.sound===false;save();sSndRender()};sSndRender();
+function coins(n){const r=mach.getBoundingClientRect();for(let i=0;i<n;i++){const c=document.createElement('span');c.className='coin';c.style.left=(r.width*(.3+Math.random()*.4))+'px';c.style.top=(r.height*.42)+'px';c.style.setProperty('--dx',(Math.random()*2-1)*r.width*.6+'px');c.style.setProperty('--dy',-(40+Math.random()*r.height*.5)+'px');c.style.setProperty('--r',(Math.random()*720-360)+'deg');c.style.animationDelay=(Math.random()*.25)+'s';mach.appendChild(c);setTimeout(()=>c.remove(),1700)}}
+function marq(t,cls){const m=$('#sMarq');m.textContent=t;m.classList.remove('flash');void m.offsetWidth;if(cls)m.classList.add(cls)}
+let marqT=0;
+$('#sGo').onclick=()=>{const b=take();if(!b)return;busy=true;$('#sGo').disabled=true;say('');clearTimeout(marqT);
+  const fin=[pick(),pick(),pick()],tease=fin[0].k===fin[1].k,durs=reduce?[0,0,0]:[1150,1700,tease?3500:2250];let stopped=0;
+  mach.classList.remove('big');mach.classList.add('spin');$('#sLever').classList.remove('pull');void mach.offsetWidth;$('#sLever').classList.add('pull');sfx.pull();marq('행운을 빌어요!');$('#sPop').className='winpop';
+  const tk=reduce?0:setInterval(sfx.tick,75);
+  reels.forEach((el,j)=>{el.classList.remove('hit','tease');
+    const K=12+j*5+(tease&&j===2?16:0),cur=SYM.find(s=>s.k===el.dataset.k)||fin[j];
+    el.innerHTML=cellsHTML([cur,...Array.from({length:K},pick),fin[j],pick()]);
+    const strip=el.firstChild,dist=-(K+1)*100;
+    const finish=()=>{el.innerHTML=cellsHTML([fin[j]]);el.dataset.k=fin[j].k;sfx.stop();el.classList.add('stop');setTimeout(()=>el.classList.remove('stop'),260);
+      if(j===1&&tease&&!reduce){reels[2].classList.add('tease');marq('두근두근…','flash');sfx.tease()}
+      if(j===2)el.classList.remove('tease');if(++stopped===3)done()};
+    if(reduce||!strip.animate){finish();return}
+    const an=strip.animate([{transform:'translateY(0)',easing:'cubic-bezier(.3,.05,.3,1)'},{transform:`translateY(${dist-9}%)`,offset:.92,easing:'ease-in-out'},{transform:`translateY(${dist}%)`}],{duration:durs[j],fill:'forwards'});
+    an.onfinish=finish});
+  function done(){clearInterval(tk);mach.classList.remove('spin');busy=false;$('#sGo').disabled=false;
+    const e=sEval(fin),ret=Math.floor(b*e.m),lvl=e.m>=100?3:e.m>=20?2:e.m>=1?1:0;
+    reels.forEach((el,j)=>el.classList.toggle('hit',!!e.k&&fin[j].k===e.k));
+    const pop=$('#sPop');pop.textContent=e.m?(ret>b?'+'+fmt(ret-b):`×${e.m}`):'';pop.className='winpop';void pop.offsetWidth;if(e.m)pop.classList.add('show');
+    if(lvl){coins([0,10,24,48][lvl]);sfx.win(lvl);marq(lvl===3?'JACKPOT!!!':lvl===2?'BIG WIN!':'WIN!','flash');if(lvl===3)mach.classList.add('big')}
+    else{e.m?sfx.win(0):sfx.lose();marq(e.m?'아깝다!':'다음엔 꼭!')}
+    marqT=setTimeout(()=>marq('JACKPOT ×777'),2200);
+    say(e.m?`${e.t}! ×${e.m} → ${fmt(ret)} 받았어요.`:`꽝. ${fmt(b)}을 잃었어요.`,e.m>=1?'win':'lose');settle('슬롯',e.m?`${e.t} ×${e.m}`:'꽝',b,ret)}};
 
 /* boot */
 function start(data){
