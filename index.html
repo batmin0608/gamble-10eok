@@ -229,6 +229,11 @@ h1{font:400 clamp(26px,3.4vw,36px)/1.05 'Black Han Sans',sans-serif;margin:0;let
 #pay li{display:grid;grid-template-columns:96px auto minmax(0,1fr);align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--line)}
 #pay .pi{display:flex}#pay .pi svg{width:32px;height:32px}
 #pay b{color:var(--gold);white-space:nowrap}
+table.odds{width:100%;border-collapse:collapse;font-size:14px}
+table.odds th,table.odds td{padding:5px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+table.odds th:first-child,table.odds td:first-child{text-align:left}
+table.odds th{color:var(--dim);font-weight:400}
+table.odds .pi{display:inline-flex;vertical-align:middle;margin-right:6px}table.odds .pi svg{width:22px;height:22px}
 #pay .d{color:var(--dim);font-size:14px;text-align:right;white-space:nowrap}
 /* ledger */
 .side{background:rgba(0,0,0,.24);border-radius:20px;padding:18px}
@@ -459,7 +464,9 @@ h1{font:400 clamp(26px,3.4vw,36px)/1.05 'Black Han Sans',sans-serif;margin:0;let
           <div>
             <h3 style="margin:0 0 6px;font-size:16px">배당표</h3>
             <ul id="pay"></ul>
-            <p class="muted">같은 그림 세 개면 큰 배당이에요. 별·세븐·다이아는 두 개만 맞아도 배당을 받고, 종 두 개는 절반을 돌려받아요.</p>
+            <h3 style="margin:16px 0 6px;font-size:16px">릴별 확률</h3>
+            <div class="scroll"><table class="odds" id="odds"></table></div>
+            <p class="muted">같은 그림 세 개면 큰 배당이에요. 별·세븐·다이아는 두 개만 맞아도 배당을 받고, 종 두 개는 절반을 돌려받아요. 세븐과 다이아는 1·2번 릴에 자주 보이지만 3번 릴에는 드물게 나와요.</p>
           </div>
         </div>
       </div>
@@ -478,7 +485,7 @@ h1{font:400 clamp(26px,3.4vw,36px)/1.05 'Black Han Sans',sans-serif;margin:0;let
     <ul id="log"></ul>
   </aside>
 </main>
-<p class="foot">가상 머니 게임이에요. 실제 돈은 오가지 않아요. 게임마다 배당을 이렇게 맞췄어요: 환수율 룰렛 97.3%, 하이로우 97%, 슬롯 약 101%, 폭탄 상자 100~110%(오래 버틸수록 높아요). 인디언 포커는 사람끼리 겨뤄서 집이 가져가는 몫이 없어요. 온라인 대결은 Firebase로 연결돼요.</p>
+<p class="foot">가상 머니 게임이에요. 실제 돈은 오가지 않아요. 게임마다 배당을 이렇게 맞췄어요: 환수율 룰렛 97.3%, 하이로우 97%, 슬롯 약 100%, 폭탄 상자 100~110%(오래 버틸수록 높아요). 인디언 포커는 사람끼리 겨뤄서 집이 가져가는 몫이 없어요. 온라인 대결은 Firebase로 연결돼요.</p>
 </div>
 
 <div id="ov" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="ovT"><h2 id="ovT"></h2><p id="ovP"></p><div id="ovB"></div></div></div>
@@ -840,14 +847,16 @@ $$('.tile').forEach((t,i)=>t.onclick=()=>{if(!M.on){say('시작을 누르면 상
 /* slots */
 const starPts=Array.from({length:10},(_,i)=>{const a=Math.PI/5*i-Math.PI/2,r=i%2?17:40;return(50+r*Math.cos(a)).toFixed(1)+','+(54+r*Math.sin(a)).toFixed(1)}).join(' ');
 const SYM=[
- {k:'cherry',n:'체리',w:24,p3:8,p2:0,svg:'<svg viewBox="0 0 100 100"><path d="M34 66Q40 34 62 16M66 66Q64 38 62 16" stroke="#2f7d32" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M62 16q16 0 22 10q-14 4-22-10z" fill="#4caf50"/><circle cx="32" cy="70" r="17" fill="#d61f2c"/><circle cx="68" cy="70" r="17" fill="#b5121e"/><circle cx="26" cy="64" r="5" fill="#fff" opacity=".6"/><circle cx="62" cy="64" r="5" fill="#fff" opacity=".5"/></svg>'},
- {k:'lemon',n:'레몬',w:25,p3:12,p2:0,svg:'<svg viewBox="0 0 100 100"><g transform="rotate(-20 50 54)"><circle cx="15" cy="54" r="6" fill="#e9bf18"/><circle cx="85" cy="54" r="6" fill="#e9bf18"/><ellipse cx="50" cy="54" rx="35" ry="27" fill="#f7d33a" stroke="#d8a90f" stroke-width="3"/><ellipse cx="40" cy="45" rx="11" ry="5" fill="#fff" opacity=".55"/></g></svg>'},
- {k:'bell',n:'종',w:21,p3:22,p2:.5,svg:'<svg viewBox="0 0 100 100"><circle cx="50" cy="15" r="6" fill="#b8860b"/><path d="M50 18C30 18 26 38 26 54C26 66 18 70 16 76H84C82 70 74 66 74 54C74 38 70 18 50 18Z" fill="#f2b632"/><path d="M50 18C40 22 36 38 36 56C36 66 32 72 30 76H16C18 70 26 66 26 54C26 38 30 18 50 18Z" fill="#ffd873"/><circle cx="50" cy="86" r="7" fill="#a86f12"/><rect x="14" y="73" width="72" height="8" rx="4" fill="#c9891a"/></svg>'},
- {k:'star',n:'별',w:17,p3:30,p2:1,svg:`<svg viewBox="0 0 100 100"><polygon points="${starPts}" fill="#ffb81c" stroke="#d98a00" stroke-width="3" stroke-linejoin="round"/><circle cx="42" cy="44" r="5" fill="#fff" opacity=".6"/></svg>`},
- {k:'seven',n:'세븐',w:8,p3:150,p2:2,svg:'<svg viewBox="0 0 100 100"><text x="50" y="86" text-anchor="middle" font-family="Black Han Sans,sans-serif" font-size="90" fill="#e1262f" stroke="#6e0d12" stroke-width="5" paint-order="stroke">7</text></svg>'},
- {k:'gem',n:'다이아',w:5,p3:777,p2:4,svg:GEM}];
-const pick=()=>{let x=rnd(100);for(const s of SYM){if(x<s.w)return s;x-=s.w}return SYM[0]};
+ {k:'cherry',n:'체리',w:[24,24,22],p3:8,p2:0,svg:'<svg viewBox="0 0 100 100"><path d="M34 66Q40 34 62 16M66 66Q64 38 62 16" stroke="#2f7d32" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M62 16q16 0 22 10q-14 4-22-10z" fill="#4caf50"/><circle cx="32" cy="70" r="17" fill="#d61f2c"/><circle cx="68" cy="70" r="17" fill="#b5121e"/><circle cx="26" cy="64" r="5" fill="#fff" opacity=".6"/><circle cx="62" cy="64" r="5" fill="#fff" opacity=".5"/></svg>'},
+ {k:'lemon',n:'레몬',w:[24,24,30],p3:12,p2:0,svg:'<svg viewBox="0 0 100 100"><g transform="rotate(-20 50 54)"><circle cx="15" cy="54" r="6" fill="#e9bf18"/><circle cx="85" cy="54" r="6" fill="#e9bf18"/><ellipse cx="50" cy="54" rx="35" ry="27" fill="#f7d33a" stroke="#d8a90f" stroke-width="3"/><ellipse cx="40" cy="45" rx="11" ry="5" fill="#fff" opacity=".55"/></g></svg>'},
+ {k:'bell',n:'종',w:[20,20,24],p3:24,p2:.5,svg:'<svg viewBox="0 0 100 100"><circle cx="50" cy="15" r="6" fill="#b8860b"/><path d="M50 18C30 18 26 38 26 54C26 66 18 70 16 76H84C82 70 74 66 74 54C74 38 70 18 50 18Z" fill="#f2b632"/><path d="M50 18C40 22 36 38 36 56C36 66 32 72 30 76H16C18 70 26 66 26 54C26 38 30 18 50 18Z" fill="#ffd873"/><circle cx="50" cy="86" r="7" fill="#a86f12"/><rect x="14" y="73" width="72" height="8" rx="4" fill="#c9891a"/></svg>'},
+ {k:'star',n:'별',w:[16,16,17],p3:32,p2:1,svg:`<svg viewBox="0 0 100 100"><polygon points="${starPts}" fill="#ffb81c" stroke="#d98a00" stroke-width="3" stroke-linejoin="round"/><circle cx="42" cy="44" r="5" fill="#fff" opacity=".6"/></svg>`},
+ {k:'seven',n:'세븐',w:[10,10,5],p3:150,p2:2.5,svg:'<svg viewBox="0 0 100 100"><text x="50" y="86" text-anchor="middle" font-family="Black Han Sans,sans-serif" font-size="90" fill="#e1262f" stroke="#6e0d12" stroke-width="5" paint-order="stroke">7</text></svg>'},
+ {k:'gem',n:'다이아',w:[6,6,2],p3:777,p2:5,svg:GEM}];
+/* each reel has its own odds: SYM[i].w[reel] in %, every reel column adds up to 100 */
+const pick=j=>{let x=rnd(100);for(const s of SYM){if(x<s.w[j])return s;x-=s.w[j]}return SYM[0]};
 function sEval(r){const c={};r.forEach(s=>c[s.k]=(c[s.k]||0)+1);for(const s of SYM)if(c[s.k]===3)return{m:s.p3,t:s.n+' 세 개',k:s.k};let best={m:0,t:'꽝',k:''};for(const s of SYM)if(c[s.k]===2&&s.p2)best={m:s.p2,t:s.n+' 두 개',k:s.k};return best}
+$('#odds').innerHTML='<tr><th>그림</th><th>1번 릴</th><th>2번 릴</th><th>3번 릴</th></tr>'+SYM.slice().reverse().map(s=>`<tr><td><span class="pi">${s.svg}</span>${s.n}</td>${s.w.map(v=>`<td>${v}%</td>`).join('')}</tr>`).join('');
 $('#pay').innerHTML=SYM.slice().reverse().map(s=>`<li><span class="pi">${s.svg.repeat(3)}</span><b>×${s.p3}</b><span class="d">${s.p2?'두 개 ×'+s.p2:'두 개는 꽝'}</span></li>`).join('');
 /* slot sound: tiny synth, starts only from a click */
 let AC=null;
@@ -864,12 +873,12 @@ function coins(n){const r=mach.getBoundingClientRect();for(let i=0;i<n;i++){cons
 function marq(t,cls){const m=$('#sMarq');m.textContent=t;m.classList.remove('flash');void m.offsetWidth;if(cls)m.classList.add(cls)}
 let marqT=0;
 $('#sGo').onclick=()=>{const b=take();if(!b)return;busy=true;$('#sGo').disabled=true;say('');clearTimeout(marqT);
-  const fin=[pick(),pick(),pick()],tease=fin[0].k===fin[1].k,durs=reduce?[0,0,0]:[1150,1700,tease?3500:2250];let stopped=0;
+  const fin=[pick(0),pick(1),pick(2)],tease=fin[0].k===fin[1].k,durs=reduce?[0,0,0]:[1150,1700,tease?3500:2250];let stopped=0;
   mach.classList.remove('big');mach.classList.add('spin');$('#sLever').classList.remove('pull');void mach.offsetWidth;$('#sLever').classList.add('pull');sfx.pull();marq('행운을 빌어요!');$('#sPop').className='winpop';
   const tk=reduce?0:setInterval(sfx.tick,75);
   reels.forEach((el,j)=>{el.classList.remove('hit','tease');
     const K=12+j*5+(tease&&j===2?16:0),cur=SYM.find(s=>s.k===el.dataset.k)||fin[j];
-    el.innerHTML=cellsHTML([cur,...Array.from({length:K},pick),fin[j],pick()]);
+    el.innerHTML=cellsHTML([cur,...Array.from({length:K},()=>pick(j)),fin[j],pick(j)]);
     const strip=el.firstChild,dist=-(K+1)*100;
     const finish=()=>{el.innerHTML=cellsHTML([fin[j]]);el.dataset.k=fin[j].k;sfx.stop();el.classList.add('stop');setTimeout(()=>el.classList.remove('stop'),260);
       if(j===1&&tease&&!reduce){reels[2].classList.add('tease');marq('두근두근…','flash');sfx.tease()}
@@ -894,7 +903,7 @@ function start(data){
   if(!Array.isArray(S.log))S.log=[];
   if(!GAMES.includes(S.game))S.game='roulette';
   $('#bet').value=Math.min(100000,S.bal);
-  markR();hRender();mRender();render();
+  markR();hRender();mRender();sSndRender();render();
   try{window.claude?.hot?.snapshot?.(()=>S)}catch(e){}
   if(S.bal<MIN)check();
 }
