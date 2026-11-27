@@ -90,6 +90,29 @@ h1{font:400 clamp(26px,3.4vw,36px)/1.05 'Black Han Sans',sans-serif;margin:0;let
 .cdot{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700}
 .cdot.h{background:#efbf4f;color:#3a2306}.cdot.t{background:#cfd3d8;color:#2a2e35}
 @media(max-width:640px){.cn{grid-template-columns:minmax(0,1fr)}.coinbox{height:260px}.cpicks{max-width:none}}
+/* crash */
+.crhist{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;min-height:30px;align-items:center}
+.crhist span{padding:3px 10px;border-radius:999px;font-weight:700;font-size:13px;background:rgba(0,0,0,.3);white-space:nowrap}
+.crhist .lo{color:#ff9a9e}.crhist .mid{color:var(--gold)}.crhist .hi{color:#7ef0b4}
+.crw{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:20px;align-items:start}
+.crfig{position:relative;height:340px;border-radius:16px;background:rgba(0,0,0,.25);overflow:hidden}
+.crfig.flash{animation:crflash .6s ease-out}
+@keyframes crflash{0%{background:rgba(217,54,62,.65)}100%{background:rgba(0,0,0,.25)}}
+#crCv{position:absolute;inset:0;width:100%;height:100%}
+#crBig{position:absolute;left:0;right:0;top:30%;text-align:center;font:400 clamp(44px,8vw,76px)/1 'Black Han Sans',sans-serif;color:#f7f1df;text-shadow:0 4px 0 rgba(0,0,0,.35);pointer-events:none;white-space:nowrap}
+#crBig.boom{color:#ff5a5f}#crBig.win{color:var(--gold)}
+#crSub{position:absolute;left:0;right:0;top:calc(30% + clamp(54px,9vw,88px));text-align:center;font-weight:700;color:var(--ivory);pointer-events:none;padding:0 12px}
+.crside .go{width:100%}
+.crauto{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:12px 0}
+.crauto label{font-weight:700;width:100%}
+#crAuto{width:6.5em;font:700 16px 'Noto Sans KR',sans-serif;padding:9px 10px;border-radius:10px;border:2px solid var(--line);background:rgba(0,0,0,.3);color:var(--ivory)}
+.crside h4{margin:14px 0 6px;font-size:16px}
+#crBots{list-style:none;margin:0;padding:0}
+#crBots li{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--line);font-size:14px}
+#crBots li.me{font-weight:700}
+#crBots b{white-space:nowrap}#crBots .win{color:#7ef0b4}#crBots .bust{color:#ff9a9e}#crBots .ride{color:var(--dim);font-weight:400}
+@media(max-width:760px){.crw{grid-template-columns:minmax(0,1fr)}.crfig{height:280px}}
+@media(prefers-reduced-motion:reduce){.crfig.flash{animation:none}}
 /* indian poker */
 .ipwrap{display:grid;gap:18px}
 .ipwrap.two{grid-template-columns:minmax(0,1fr) 290px}
@@ -450,6 +473,21 @@ table.odds .pi{display:inline-flex;vertical-align:middle;margin-right:6px}table.
         </div>
       </div>
 
+      <div class="panel" id="p-crash" hidden>
+        <div class="crhist" id="crHist" aria-label="최근 터진 배율"></div>
+        <div class="crw">
+          <div class="crfig"><canvas id="crCv" aria-label="배율 그래프"></canvas><div id="crBig" aria-live="polite">×1.00</div><div id="crSub"></div></div>
+          <div class="crside">
+            <button class="go" id="crGo">베팅하고 출발</button>
+            <div class="crauto"><label for="crAuto">자동 챙기기</label><input id="crAuto" type="number" inputmode="decimal" min="1.01" step="0.01" placeholder="끔"><button class="pill" data-ca="1.5">×1.5</button><button class="pill" data-ca="2">×2</button><button class="pill" data-ca="5">×5</button><button class="pill" data-ca="10">×10</button><button class="pill" data-ca="off">끔</button></div>
+            <h4>같은 판에 탄 손님</h4>
+            <ul id="crBots"></ul>
+            <p class="muted">손님들은 분위기를 위한 가상 인물이에요. 결과에는 영향을 주지 않아요.</p>
+          </div>
+        </div>
+        <p class="muted">배율이 ×1.00부터 올라가다 아무도 모르는 순간에 터져요. 터지기 전에 "챙기기"(또는 스페이스 바)를 누르면 그 배율만큼 받아요. ×2까지 버틸 확률은 약 48.5%, ×10은 약 9.7%예요. 약 3%는 출발하자마자 ×1.00에서 터져요.</p>
+      </div>
+
       <div class="panel" id="p-indian" hidden>
         <div class="ipwrap">
           <div>
@@ -521,7 +559,7 @@ table.odds .pi{display:inline-flex;vertical-align:middle;margin-right:6px}table.
     <ul id="log"></ul>
   </aside>
 </main>
-<p class="foot">가상 머니 게임이에요. 실제 돈은 오가지 않아요. 게임마다 배당을 이렇게 맞췄어요: 환수율 룰렛 97.3%, 하이로우 97%, 슬롯 약 95.5%, 동전 던지기 100%, 폭탄 상자 100~110%(오래 버틸수록 높아요). 인디언 포커는 사람끼리 겨뤄서 집이 가져가는 몫이 없어요. 온라인 대결은 Firebase로 연결돼요.</p>
+<p class="foot">가상 머니 게임이에요. 실제 돈은 오가지 않아요. 게임마다 배당을 이렇게 맞췄어요: 환수율 룰렛 97.3%, 하이로우 97%, 슬롯 약 95.5%, 동전 던지기 100%, 크래시 97%, 폭탄 상자 100~110%(오래 버틸수록 높아요). 인디언 포커는 사람끼리 겨뤄서 집이 가져가는 몫이 없어요. 온라인 대결은 Firebase로 연결돼요.</p>
 </div>
 
 <div id="ov" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="ovT"><h2 id="ovT"></h2><p id="ovP"></p><div id="ovB"></div></div></div>
@@ -529,7 +567,7 @@ table.odds .pi{display:inline-flex;vertical-align:middle;margin-right:6px}table.
 <script>
 {
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-const START=1e6,GOAL=1e9,MIN=1000,EDGE=.97,GAMES=['roulette','hilo','mines','slots','coin','indian'];
+const START=1e6,GOAL=1e9,MIN=1000,EDGE=.97,GAMES=['roulette','hilo','mines','slots','coin','crash','indian'];
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const S={bal:START,held:0,attempt:1,rounds:0,peak:START,bestPeak:START,bestRounds:0,log:[],game:'roulette',done:false};
 let busy=false,view='title';
@@ -576,6 +614,7 @@ const LIST=[
  {id:'mines',n:'폭탄 상자',d:'보석이 든 상자만 골라 여세요. 폭탄을 열면 끝.',top:'최대 ×359만',bg:'#5a3a12',art:Array.from({length:15},(_,i)=>{const x=22+(i%5)*33,y=12+Math.floor(i/5)*33,o=i===6||i===8,b=i===12;return `<rect x="${x}" y="${y}" width="28" height="28" rx="6" fill="${b?'#d9363e':o?'#0a3a26':'#e2b25a'}"/>`+(o?`<polygon points="${x+14},${y+5} ${x+23},${y+12} ${x+14},${y+24} ${x+5},${y+12}" fill="#4fd8cb"/>`:'')+(b?`<circle cx="${x+13}" cy="${y+16}" r="8" fill="#1a1512"/><circle cx="${x+22}" cy="${y+6}" r="3" fill="#ff8a3d"/>`:'')}).join('')},
  {id:'slots',n:'슬롯',d:'레버 한 번에 운명이 갈려요. 다이아 세 개면 잭팟.',top:'잭팟 ×2000',bg:'#3d1550',art:'<rect x="40" y="10" width="120" height="100" rx="14" fill="#d9363e"/><rect x="50" y="32" width="100" height="52" rx="8" fill="#1b0f0b"/>'+[0,1,2].map(j=>`<rect x="${56+j*31}" y="38" width="26" height="40" rx="4" fill="#fffaf0"/><text x="${69+j*31}" y="70" text-anchor="middle" font-family="Black Han Sans,sans-serif" font-size="30" fill="#e1262f">7</text>`).join('')+'<rect x="56" y="90" width="88" height="12" rx="6" fill="#efbf4f"/><line x1="168" y1="60" x2="168" y2="24" stroke="#c9c9c9" stroke-width="5"/><circle cx="168" cy="22" r="8" fill="#e1262f"/>'},
  {id:'coin',n:'동전 던지기',d:'앞면이냐 뒷면이냐, 반반의 승부. 맞히면 두 배.',top:'×2 · 확률 50%',bg:'#6b4e16',art:'<ellipse cx="100" cy="104" rx="34" ry="6" fill="#000" opacity=".25"/><circle cx="100" cy="52" r="38" fill="#b8860b"/><circle cx="100" cy="52" r="33" fill="#efbf4f"/><circle cx="100" cy="52" r="26" fill="none" stroke="#b8860b" stroke-width="2" stroke-dasharray="3 4"/><text x="100" y="62" text-anchor="middle" font-family="Black Han Sans,sans-serif" font-size="28" fill="#6b4a0a">앞</text><path d="M40 40 q-8 10 0 20 M160 40 q8 10 0 20" stroke="#fff3c4" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/>'},
+ {id:'crash',n:'크래시',d:'배율이 끝없이 치솟다 언젠가 터져요. 터지기 전에 챙기세요.',top:'터지기 전까지 무한',bg:'#3b1f5e',art:'<g stroke="rgba(255,255,255,.15)"><line x1="20" y1="100" x2="190" y2="100"/><line x1="20" y1="70" x2="190" y2="70"/><line x1="20" y1="40" x2="190" y2="40"/></g><path d="M20 100 Q110 98 150 40 L150 100 Z" fill="rgba(239,191,79,.3)"/><path d="M20 100 Q110 98 150 40" stroke="#efbf4f" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="150" cy="40" r="8" fill="#efbf4f"/><circle cx="150" cy="40" r="3" fill="#fff3c4"/><text x="34" y="46" font-family="Black Han Sans,sans-serif" font-size="28" fill="#fff3c4">×2.47</text>'},
  {id:'indian',n:'인디언 포커',d:'내 카드는 안 보이고 상대 카드만 보여요. 채팅으로 심리전을 펼치는 1:1 대결.',top:'입장비 100만~1억',bg:'#0b4f6c',art:'<circle cx="58" cy="86" r="24" fill="#f1c27d"/><rect x="44" y="20" width="28" height="40" rx="4" fill="#fffdf6" transform="rotate(-6 58 40)"/><text x="58" y="48" text-anchor="middle" font-size="20" font-weight="900" fill="#c8202a">K</text><circle cx="142" cy="86" r="24" fill="#e0a96d"/><rect x="128" y="20" width="28" height="40" rx="4" fill="#fffdf6" transform="rotate(6 142 40)"/><text x="142" y="48" text-anchor="middle" font-size="20" font-weight="900" fill="#1b1b1b">3</text><path d="M84 52h32a6 6 0 0 1 6 6v14a6 6 0 0 1-6 6h-18l-8 7v-7h-6a6 6 0 0 1-6-6v-14a6 6 0 0 1 6-6z" fill="#efbf4f"/><text x="100" y="71" text-anchor="middle" font-size="16" font-weight="900" fill="#3a2306">?!</text>'}
 ];
 $('#games').innerHTML=LIST.map(g=>`<button class="gcard" data-go="${g.id}"><div class="art" style="--bg:${g.bg}"><svg viewBox="0 0 200 120" aria-hidden="true">${g.art}</svg></div><div class="body"><h3>${g.n}</h3><p>${g.d}</p><div class="meta"><b>${g.top}</b><span>입장 →</span></div></div></button>`).join('')+'<div class="gcard soon"><div class="body"><h3>새 게임 준비 중</h3><p>곧 다른 테이블이 열려요.</p></div></div>';
@@ -951,6 +990,65 @@ $('#cGo').onclick=()=>{const b=take();if(!b)return;busy=true;$('#cGo').disabled=
   sh.animate([{transform:'scale(1)',opacity:.45},{transform:'scale(.55)',opacity:.2,offset:.5},{transform:'scale(1)',opacity:.45}],{duration:1500});
   a.onfinish=()=>{coin.animate([{transform:`translateY(0) rotateY(${end}deg)`},{transform:`translateY(-12px) rotateY(${end}deg)`,offset:.4},{transform:`translateY(0) rotateY(${end}deg)`}],{duration:260});land()}};
 cRender();
+/* crash: multiplier grows until a random crash point; P(reach x) = 0.97 / x */
+const CR={phase:'idle',t0:0,tNow:0,crash:1,m:1,bet:0,cashed:0,auto:0,hist:[],raf:0,bots:[],lastInt:1};
+const crK=Math.log(2)/4.5;
+const GUESTS=['강남큰손','새벽의타짜','월급루팡','칩수집가','올인맨','조심이','한탕주의','소심한고수','야간근무자','로또대신'];
+function crPoint(){const u=rnd(1e9)/1e9;let c=Math.floor(.97/(1-u)*100)/100;if(c<1)c=1;return Math.min(c,1000)}
+const crF=m=>'×'+m.toFixed(2);
+function crDraw(){const cv=$('#crCv'),W=cv.clientWidth,H=cv.clientHeight,d=devicePixelRatio||1;if(!W||!H)return;
+  if(cv.width!==Math.round(W*d)||cv.height!==Math.round(H*d)){cv.width=Math.round(W*d);cv.height=Math.round(H*d)}
+  const c=cv.getContext('2d');c.setTransform(d,0,0,d,0,0);c.clearRect(0,0,W,H);
+  const t=CR.phase==='run'||CR.phase==='done'?CR.tNow:0,tMax=Math.max(8,t*1.12),mMax=Math.max(2,CR.m*1.2),L=48,B=H-28,Rr=W-16,T=18;
+  const X=s=>L+(Rr-L)*s/tMax,Y=m=>B-(B-T)*(m-1)/(mMax-1);
+  const step=[.25,.5,1,2,5,10,25,50,100,250].find(s=>(mMax-1)/s<=5)||500;
+  c.font='600 13px "Noto Sans KR",sans-serif';c.textAlign='right';c.textBaseline='middle';
+  for(let v=1;v<=mMax+1e-9;v+=step){const y=Y(v);c.strokeStyle='rgba(247,241,223,.12)';c.lineWidth=1;c.beginPath();c.moveTo(L,y);c.lineTo(Rr,y);c.stroke();c.fillStyle='rgba(247,241,223,.6)';c.fillText('×'+(+v.toFixed(2)),L-8,y)}
+  if(t<=0)return;
+  const boom=CR.phase==='done',col=boom?'#ff5a5f':'#efbf4f',n=80;
+  c.beginPath();c.moveTo(X(0),Y(1));for(let i=1;i<=n;i++){const s=t*i/n;c.lineTo(X(s),Y(Math.min(Math.exp(crK*s),CR.m)))}
+  const ex=X(t),ey=Y(CR.m);
+  c.lineTo(ex,B);c.lineTo(X(0),B);c.closePath();const g=c.createLinearGradient(0,T,0,B);g.addColorStop(0,boom?'rgba(255,90,95,.35)':'rgba(239,191,79,.35)');g.addColorStop(1,'rgba(0,0,0,0)');c.fillStyle=g;c.fill();
+  c.beginPath();c.moveTo(X(0),Y(1));for(let i=1;i<=n;i++){const s=t*i/n;c.lineTo(X(s),Y(Math.min(Math.exp(crK*s),CR.m)))}c.strokeStyle=col;c.lineWidth=4;c.lineJoin='round';c.stroke();
+  if(CR.cashed){const cs=Math.log(CR.cashed)/crK;c.fillStyle='#7ef0b4';c.beginPath();c.arc(X(cs),Y(CR.cashed),7,0,7);c.fill()}
+  c.fillStyle=col;c.beginPath();c.arc(ex,ey,boom?10:8,0,7);c.fill();if(!boom){c.fillStyle='#fff3c4';c.beginPath();c.arc(ex,ey,3.5,0,7);c.fill()}}
+function crRender(){const big=$('#crBig'),sub=$('#crSub'),go=$('#crGo');
+  big.className=CR.phase==='done'?'boom':CR.cashed?'win':'';
+  big.textContent=CR.phase==='wait'?'준비…':CR.phase==='idle'?'×1.00':(CR.phase==='done'?'CRASH ':'')+crF(CR.m);
+  sub.textContent=CR.phase==='idle'?'베팅하고 출발하세요':CR.phase==='wait'?'곧 출발해요':CR.cashed?`${crF(CR.cashed)}에서 챙겼어요 · +${fmt(Math.floor(CR.bet*CR.cashed)-CR.bet)}`:CR.phase==='done'?(CR.bet?'챙기지 못했어요':''):CR.bet?`지금 챙기면 ${fmt(Math.floor(CR.bet*CR.m))}`:'';
+  if(CR.phase==='run'&&CR.bet&&!CR.cashed){go.textContent=`챙기기 · ${fmt(Math.floor(CR.bet*CR.m))}`;go.className='go cash';go.disabled=false}
+  else{go.className='go';go.textContent=CR.phase==='idle'||CR.phase==='done'?'베팅하고 출발':CR.cashed?'챙김 완료 · 구경 중':'출발 준비 중…';go.disabled=CR.phase==='wait'||CR.phase==='run'}
+  const hb=$('#crHist');hb.textContent='';if(!CR.hist.length){const s=document.createElement('span');s.textContent='최근 기록 없음';s.className='muted';hb.appendChild(s)}
+  CR.hist.slice(-14).reverse().forEach(v=>{const s=document.createElement('span');s.className=v<2?'lo':v<10?'mid':'hi';s.textContent=crF(v);hb.appendChild(s)});
+  const ul=$('#crBots');ul.textContent='';const rows=(CR.bet?[{n:'나',b:CR.bet,st:CR.cashed?'win':CR.phase==='done'?'bust':'ride',at:CR.cashed,me:1}]:[]).concat(CR.bots);
+  if(!rows.length){const li=document.createElement('li');li.className='muted';li.textContent='출발하면 같은 판에 탄 손님들이 보여요.';ul.appendChild(li)}
+  rows.forEach(r=>{const li=document.createElement('li'),a=document.createElement('span'),s=document.createElement('b');li.className=r.me?'me':'';a.textContent=`${r.n} · ${fmt(r.b)}`;s.className=r.st;s.textContent=r.st==='win'?crF(r.at)+' 챙김':r.st==='bust'?'터짐':'타는 중';li.append(a,s);ul.appendChild(li)});
+  crDraw()}
+function crCash(at){if(!CR.bet||CR.cashed||CR.phase!=='run')return;CR.cashed=at;const ret=Math.floor(CR.bet*at);sfx.win(at>=10?2:1);say(`${crF(at)}에서 챙겼어요! ${fmt(ret-CR.bet)}을 벌었어요.`,'win');settle('크래시',`${crF(at)}에서 챙김`,CR.bet,ret);crRender()}
+function crBoom(){cancelAnimationFrame(CR.raf);CR.phase='done';CR.m=CR.crash;CR.tNow=Math.log(CR.crash)/crK;CR.hist.push(CR.crash);CR.hist=CR.hist.slice(-30);
+  CR.bots.forEach(b=>{if(b.st==='ride')b.st='bust'});beep(120,0,.35,'sawtooth',.12);beep(70,.05,.45,'sine',.2);
+  const f=$('.crfig');f.classList.remove('flash');void f.offsetWidth;f.classList.add('flash');
+  if(CR.bet&&!CR.cashed){sfx.lose();say(`${crF(CR.crash)}에서 터졌어요. ${fmt(CR.bet)}을 잃었어요.`,'lose');settle('크래시',`${crF(CR.crash)}에서 터짐`,CR.bet,0)}
+  else if(CR.cashed)say(`${crF(CR.crash)}에서 터졌어요. 미리 챙겨서 다행이에요!`,'win');
+  busy=false;crRender()}
+function crTick(){CR.tNow=(performance.now()-CR.t0)/1000;const raw=Math.exp(crK*CR.tNow);
+  if(CR.bet&&!CR.cashed&&CR.auto>=1.01&&CR.auto<CR.crash&&raw>=CR.auto){CR.m=CR.auto;crCash(CR.auto)}
+  if(raw>=CR.crash){crBoom();return}
+  CR.m=Math.floor(raw*100)/100;
+  CR.bots.forEach(b=>{if(b.st==='ride'&&CR.m>=b.at)b.st='win'});
+  const ip=Math.floor(CR.m);if(ip>CR.lastInt){CR.lastInt=ip;beep(Math.min(1600,500+ip*90),0,.06,'square',.04)}
+  crRender();CR.raf=requestAnimationFrame(crTick)}
+function crStart(){const a=Number($('#crAuto').value);CR.auto=a>=1.01?Math.floor(a*100)/100:0;const b=take();if(!b)return;busy=true;
+  Object.assign(CR,{phase:'wait',bet:b,cashed:0,m:1,tNow:0,crash:crPoint(),lastInt:1});
+  const names=GUESTS.slice().sort(()=>Math.random()-.5).slice(0,4+rnd(3)),bets=[1e4,5e4,1e5,3e5,5e5,1e6,5e6,1e7];
+  CR.bots=names.map(n=>({n,b:bets[rnd(bets.length)],at:Math.max(1.05,Math.floor(Math.min(.97/(1-Math.random()*.97),50)*100)/100),st:'ride'}));
+  sfx.pull();say('출발합니다! 터지기 전에 챙기세요.');crRender();
+  setTimeout(()=>{CR.phase='run';CR.t0=performance.now();CR.raf=requestAnimationFrame(crTick)},900)}
+$('#crGo').onclick=()=>{if(CR.phase==='run'){crCash(CR.m);return}if(CR.phase==='idle'||CR.phase==='done')crStart()};
+$$('[data-ca]').forEach(b=>b.onclick=()=>{$('#crAuto').value=b.dataset.ca==='off'?'':b.dataset.ca});
+addEventListener('keydown',e=>{if(e.code==='Space'&&view==='game'&&S.game==='crash'&&CR.phase==='run'&&document.activeElement.tagName!=='INPUT'){e.preventDefault();crCash(CR.m)}});
+const crRO=new ResizeObserver(()=>crDraw());crRO.observe($('.crfig'));
+crRender();
 /* boot */
 function start(data){
   let ls={};try{ls=JSON.parse(localStorage.getItem('gamble10')||'{}')||{}}catch(e){}
