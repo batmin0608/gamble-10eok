@@ -71,6 +71,25 @@ h1{font:400 clamp(26px,3.4vw,36px)/1.05 'Black Han Sans',sans-serif;margin:0;let
 @keyframes chase{to{background-position:22px 0}}
 .enter{font-size:26px;min-height:62px;padding:0 48px;border-radius:16px;margin-top:14px}
 #tCont{color:var(--dim);font-size:15px;margin:0}
+/* coin flip */
+.cn{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:28px;align-items:center}
+.coinbox{position:relative;height:320px;padding-top:40px;box-sizing:border-box;display:grid;place-items:center;perspective:900px}
+.flipc{position:relative;width:200px;height:200px;transform-style:preserve-3d}
+.face{position:absolute;inset:0;border-radius:50%;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Black Han Sans',sans-serif;line-height:1}
+.face span{font-size:72px}
+.face small{font-size:20px;margin-top:6px;opacity:.8}
+.face.h{background:radial-gradient(circle at 35% 30%,#fff3b0,#efbf4f 55%,#b8860b);color:#6b4a0a;box-shadow:inset 0 0 0 8px #b8860b,inset 0 0 0 12px #f6d77a,0 14px 26px rgba(0,0,0,.4)}
+.face.t{background:radial-gradient(circle at 35% 30%,#ffffff,#cfd3d8 55%,#878d96);color:#3a3f47;box-shadow:inset 0 0 0 8px #878d96,inset 0 0 0 12px #eef0f2,0 14px 26px rgba(0,0,0,.4);transform:rotateY(180deg)}
+.cshadow{position:absolute;bottom:22px;left:50%;width:150px;height:18px;margin-left:-75px;border-radius:50%;background:#000;opacity:.45;filter:blur(4px)}
+.cside h3{margin:0 0 10px;font:400 22px/1.1 'Black Han Sans',sans-serif}
+.cpicks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:360px;margin-bottom:12px}
+.cpick{min-height:60px;border-radius:14px;border:3px solid var(--line);background:rgba(0,0,0,.25);font:400 24px 'Black Han Sans',sans-serif}
+.cpick[data-cp=h].sel{background:#efbf4f!important;color:#3a2306!important;border-color:#fff3c4!important}
+.cpick[data-cp=t].sel{background:#cfd3d8!important;color:#2a2e35!important;border-color:#fff!important}
+.chist{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 6px;min-height:34px;align-items:center}
+.cdot{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700}
+.cdot.h{background:#efbf4f;color:#3a2306}.cdot.t{background:#cfd3d8;color:#2a2e35}
+@media(max-width:640px){.cn{grid-template-columns:minmax(0,1fr)}.coinbox{height:260px}.cpicks{max-width:none}}
 /* indian poker */
 .ipwrap{display:grid;gap:18px}
 .ipwrap.two{grid-template-columns:minmax(0,1fr) 290px}
@@ -411,6 +430,26 @@ table.odds .pi{display:inline-flex;vertical-align:middle;margin-right:6px}table.
         </div>
       </div>
 
+      <div class="panel" id="p-coin" hidden>
+        <div class="cn">
+          <div class="coinbox">
+            <div class="flipc" id="cCoin" role="img" aria-label="동전">
+              <div class="face h"><span>앞</span><small>10억</small></div>
+              <div class="face t"><span>뒤</span><small>★</small></div>
+            </div>
+            <div class="cshadow" id="cShadow"></div>
+          </div>
+          <div class="cside">
+            <h3>어느 쪽에 걸까요?</h3>
+            <div class="cpicks"><button class="cpick" data-cp="h">앞면</button><button class="cpick" data-cp="t">뒷면</button></div>
+            <button class="go" id="cGo">동전 던지기</button>
+            <p class="muted" id="cStat"></p>
+            <div class="chist" id="cHist"></div>
+            <p class="muted">맞히면 건 돈의 2배를 받고, 틀리면 건 돈을 잃어요. 앞면과 뒷면은 언제나 반반이라, 앞에 무엇이 나왔든 다음 결과와는 상관없어요.</p>
+          </div>
+        </div>
+      </div>
+
       <div class="panel" id="p-indian" hidden>
         <div class="ipwrap">
           <div>
@@ -482,7 +521,7 @@ table.odds .pi{display:inline-flex;vertical-align:middle;margin-right:6px}table.
     <ul id="log"></ul>
   </aside>
 </main>
-<p class="foot">가상 머니 게임이에요. 실제 돈은 오가지 않아요. 게임마다 배당을 이렇게 맞췄어요: 환수율 룰렛 97.3%, 하이로우 97%, 슬롯 약 95.5%, 폭탄 상자 100~110%(오래 버틸수록 높아요). 인디언 포커는 사람끼리 겨뤄서 집이 가져가는 몫이 없어요. 온라인 대결은 Firebase로 연결돼요.</p>
+<p class="foot">가상 머니 게임이에요. 실제 돈은 오가지 않아요. 게임마다 배당을 이렇게 맞췄어요: 환수율 룰렛 97.3%, 하이로우 97%, 슬롯 약 95.5%, 동전 던지기 100%, 폭탄 상자 100~110%(오래 버틸수록 높아요). 인디언 포커는 사람끼리 겨뤄서 집이 가져가는 몫이 없어요. 온라인 대결은 Firebase로 연결돼요.</p>
 </div>
 
 <div id="ov" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="ovT"><h2 id="ovT"></h2><p id="ovP"></p><div id="ovB"></div></div></div>
@@ -490,7 +529,7 @@ table.odds .pi{display:inline-flex;vertical-align:middle;margin-right:6px}table.
 <script>
 {
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-const START=1e6,GOAL=1e9,MIN=1000,EDGE=.97,GAMES=['roulette','hilo','mines','slots','indian'];
+const START=1e6,GOAL=1e9,MIN=1000,EDGE=.97,GAMES=['roulette','hilo','mines','slots','coin','indian'];
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const S={bal:START,held:0,attempt:1,rounds:0,peak:START,bestPeak:START,bestRounds:0,log:[],game:'roulette',done:false};
 let busy=false,view='title';
@@ -536,6 +575,7 @@ const LIST=[
  {id:'hilo',n:'하이로우',d:'다음 카드가 높을까 낮을까, 아니면 같을까. 맞힐수록 배율이 쌓여요.',top:'연승할수록 커짐',bg:'#1d3f7a',art:'<g transform="rotate(-12 78 62)"><rect x="50" y="22" width="56" height="80" rx="7" fill="#fffdf6"/><rect x="55" y="27" width="46" height="70" rx="4" fill="#b3242b"/></g><g transform="rotate(10 120 60)"><rect x="92" y="20" width="56" height="80" rx="7" fill="#fffdf6"/><text x="99" y="40" font-size="16" font-weight="900" fill="#c8202a">K</text><text x="120" y="76" text-anchor="middle" font-size="34" fill="#c8202a">&#9829;&#xFE0E;</text></g><polygon points="172,30 184,46 160,46" fill="#efbf4f"/><polygon points="172,92 184,76 160,76" fill="#efbf4f"/>'},
  {id:'mines',n:'폭탄 상자',d:'보석이 든 상자만 골라 여세요. 폭탄을 열면 끝.',top:'최대 ×359만',bg:'#5a3a12',art:Array.from({length:15},(_,i)=>{const x=22+(i%5)*33,y=12+Math.floor(i/5)*33,o=i===6||i===8,b=i===12;return `<rect x="${x}" y="${y}" width="28" height="28" rx="6" fill="${b?'#d9363e':o?'#0a3a26':'#e2b25a'}"/>`+(o?`<polygon points="${x+14},${y+5} ${x+23},${y+12} ${x+14},${y+24} ${x+5},${y+12}" fill="#4fd8cb"/>`:'')+(b?`<circle cx="${x+13}" cy="${y+16}" r="8" fill="#1a1512"/><circle cx="${x+22}" cy="${y+6}" r="3" fill="#ff8a3d"/>`:'')}).join('')},
  {id:'slots',n:'슬롯',d:'레버 한 번에 운명이 갈려요. 다이아 세 개면 잭팟.',top:'잭팟 ×2000',bg:'#3d1550',art:'<rect x="40" y="10" width="120" height="100" rx="14" fill="#d9363e"/><rect x="50" y="32" width="100" height="52" rx="8" fill="#1b0f0b"/>'+[0,1,2].map(j=>`<rect x="${56+j*31}" y="38" width="26" height="40" rx="4" fill="#fffaf0"/><text x="${69+j*31}" y="70" text-anchor="middle" font-family="Black Han Sans,sans-serif" font-size="30" fill="#e1262f">7</text>`).join('')+'<rect x="56" y="90" width="88" height="12" rx="6" fill="#efbf4f"/><line x1="168" y1="60" x2="168" y2="24" stroke="#c9c9c9" stroke-width="5"/><circle cx="168" cy="22" r="8" fill="#e1262f"/>'},
+ {id:'coin',n:'동전 던지기',d:'앞면이냐 뒷면이냐, 반반의 승부. 맞히면 두 배.',top:'×2 · 확률 50%',bg:'#6b4e16',art:'<ellipse cx="100" cy="104" rx="34" ry="6" fill="#000" opacity=".25"/><circle cx="100" cy="52" r="38" fill="#b8860b"/><circle cx="100" cy="52" r="33" fill="#efbf4f"/><circle cx="100" cy="52" r="26" fill="none" stroke="#b8860b" stroke-width="2" stroke-dasharray="3 4"/><text x="100" y="62" text-anchor="middle" font-family="Black Han Sans,sans-serif" font-size="28" fill="#6b4a0a">앞</text><path d="M40 40 q-8 10 0 20 M160 40 q8 10 0 20" stroke="#fff3c4" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/>'},
  {id:'indian',n:'인디언 포커',d:'내 카드는 안 보이고 상대 카드만 보여요. 채팅으로 심리전을 펼치는 1:1 대결.',top:'입장비 100만~1억',bg:'#0b4f6c',art:'<circle cx="58" cy="86" r="24" fill="#f1c27d"/><rect x="44" y="20" width="28" height="40" rx="4" fill="#fffdf6" transform="rotate(-6 58 40)"/><text x="58" y="48" text-anchor="middle" font-size="20" font-weight="900" fill="#c8202a">K</text><circle cx="142" cy="86" r="24" fill="#e0a96d"/><rect x="128" y="20" width="28" height="40" rx="4" fill="#fffdf6" transform="rotate(6 142 40)"/><text x="142" y="48" text-anchor="middle" font-size="20" font-weight="900" fill="#1b1b1b">3</text><path d="M84 52h32a6 6 0 0 1 6 6v14a6 6 0 0 1-6 6h-18l-8 7v-7h-6a6 6 0 0 1-6-6v-14a6 6 0 0 1 6-6z" fill="#efbf4f"/><text x="100" y="71" text-anchor="middle" font-size="16" font-weight="900" fill="#3a2306">?!</text>'}
 ];
 $('#games').innerHTML=LIST.map(g=>`<button class="gcard" data-go="${g.id}"><div class="art" style="--bg:${g.bg}"><svg viewBox="0 0 200 120" aria-hidden="true">${g.art}</svg></div><div class="body"><h3>${g.n}</h3><p>${g.d}</p><div class="meta"><b>${g.top}</b><span>입장 →</span></div></div></button>`).join('')+'<div class="gcard soon"><div class="body"><h3>새 게임 준비 중</h3><p>곧 다른 테이블이 열려요.</p></div></div>';
@@ -892,6 +932,25 @@ $('#sGo').onclick=()=>{const b=take();if(!b)return;busy=true;$('#sGo').disabled=
     marqT=setTimeout(()=>marq('JACKPOT ×2000'),2200);
     say(e.m?`${e.t}! ×${e.m} → ${fmt(ret)} 받았어요.`:`꽝. ${fmt(b)}을 잃었어요.`,e.m>=1?'win':'lose');settle('슬롯',e.m?`${e.t} ×${e.m}`:'꽝',b,ret)}};
 
+/* coin flip: 50/50, right pays x2 */
+const CO={pick:'h',rot:0,hist:[],streak:0};
+const coinK={h:'앞면',t:'뒷면'};
+function cRender(){$$('[data-cp]').forEach(b=>{b.classList.toggle('sel',b.dataset.cp===CO.pick);b.setAttribute('aria-pressed',b.dataset.cp===CO.pick)});
+  const hb=$('#cHist');hb.textContent='';if(!CO.hist.length){const s=document.createElement('span');s.className='muted';s.textContent='던진 결과가 여기 쌓여요.';hb.appendChild(s)}
+  CO.hist.slice(-16).forEach(r=>{const s=document.createElement('span');s.className='cdot '+r;s.textContent=r==='h'?'앞':'뒤';hb.appendChild(s)});
+  const nh=CO.hist.filter(r=>r==='h').length;$('#cStat').textContent=CO.hist.length?`앞면 ${nh}번 · 뒷면 ${CO.hist.length-nh}번 · 연속 적중 ${CO.streak}번`:'앞면과 뒷면이 나올 확률은 똑같이 50%예요.'}
+$$('[data-cp]').forEach(b=>b.onclick=()=>{if(busy)return;CO.pick=b.dataset.cp;cRender()});
+$('#cGo').onclick=()=>{const b=take();if(!b)return;busy=true;$('#cGo').disabled=true;say('동전이 공중에서 돌고 있어요…');
+  const res=rnd(2)?'h':'t',pick=CO.pick,coin=$('#cCoin'),sh=$('#cShadow'),start=CO.rot%360,end=start+360*(6+rnd(3))+((res==='t')!==(((start%360)+360)%360>=180)?180:0);
+  CO.rot=end;sfx.pull();
+  const land=()=>{coin.style.transform=`rotateY(${end}deg)`;sfx.stop();busy=false;$('#cGo').disabled=false;const win=res===pick;CO.hist.push(res);CO.hist=CO.hist.slice(-40);CO.streak=win?CO.streak+1:0;
+    if(win){sfx.win(1);say(`${coinK[res]}! 맞혔어요. ${fmt(b)}을 벌었어요.`,'win')}else{sfx.lose();say(`${coinK[res]}… 틀렸어요. ${fmt(b)}을 잃었어요.`,'lose')}
+    cRender();settle('동전 던지기',`${coinK[pick]}에 걸고 ${coinK[res]}`,b,win?b*2:0)};
+  if(reduce||!coin.animate){land();return}
+  const a=coin.animate([{transform:`translateY(0) rotateY(${start}deg)`},{transform:`translateY(-80px) rotateY(${(start+end)/2}deg)`,offset:.5,easing:'cubic-bezier(.4,0,1,1)'},{transform:`translateY(0) rotateY(${end}deg)`}],{duration:1500,easing:'cubic-bezier(0,0,.6,1)',fill:'forwards'});
+  sh.animate([{transform:'scale(1)',opacity:.45},{transform:'scale(.55)',opacity:.2,offset:.5},{transform:'scale(1)',opacity:.45}],{duration:1500});
+  a.onfinish=()=>{coin.animate([{transform:`translateY(0) rotateY(${end}deg)`},{transform:`translateY(-12px) rotateY(${end}deg)`,offset:.4},{transform:`translateY(0) rotateY(${end}deg)`}],{duration:260});land()}};
+cRender();
 /* boot */
 function start(data){
   let ls={};try{ls=JSON.parse(localStorage.getItem('gamble10')||'{}')||{}}catch(e){}
